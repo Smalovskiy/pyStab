@@ -10,23 +10,25 @@ options = {"CAP_PROP_FRAME_WIDTH": 720,
 
 # assigning it
 # To open live video stream on webcam at first index(i.e. 0) device
-stream = CamGear(source="video.mp4").start()
+stream = CamGear(source="test_stab.mp4").start()
 
 # initiate stabilizer object with defined parameters
-stab = Stabilizer(smoothing_radius=200, crop_n_zoom=True, border_size=25, logging=True)
+stab = Stabilizer(smoothing_radius=25, crop_n_zoom=True, border_size=15)
 
 # loop over
 while True:
 
     # read frames from stream
     frame = stream.read()
-    frame=cv2.rotate(frame, cv2.ROTATE_180)
+
+    #frame = cv2.rotate(frame, cv2.ROTATE_180)
     # check for frame if Nonetype
     if frame is None:
         break
 
     # send current frame to stabilizer for processing
     stabilized_frame = stab.stabilize(frame)
+    unstabilized_frame = frame
 
     # wait for stabilizer which still be initializing
     if stabilized_frame is None:
@@ -36,6 +38,7 @@ while True:
 
     # Show output window
     cv2.imshow("Output Stabilized Frame", stabilized_frame)
+    cv2.imshow("Output UnStab Frame", unstabilized_frame)
 
     # check for 'q' key if pressed
     key = cv2.waitKey(1) & 0xFF
